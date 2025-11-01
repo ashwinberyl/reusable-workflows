@@ -24,13 +24,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python, Tools, and Dependencies
-        uses: ashwinberyl/reusable-workflows/actions/setup-python
+        uses: ashwinberyl/reusable-workflows/actions/setup-python@v1
         with:
           python-version: ${{ inputs.python-version }}
           requirements-file: ${{ inputs.requirements-file }}
 
       - name: Run Tests and Coverage
-        uses: ashwinberyl/reusable-workflows/actions/run-tests
+        uses: ashwinberyl/reusable-workflows/actions/run-tests@v1
         with:
           app-directory: ${{ inputs.app-directory }}
 
@@ -44,7 +44,7 @@ jobs:
 
       - name: Setup Python, Tools, and Dependencies
         # Security tools are installed by this action
-        uses: ashwinberyl/reusable-workflows//actions/setup-python
+        uses: ashwinberyl/reusable-workflows//actions/setup-python@v1
         with:
           python-version: ${{ inputs.python-version }}
           requirements-file: ${{ inputs.requirements-file }}
@@ -56,11 +56,11 @@ jobs:
           GITLEAKS_ENABLE_REGEX_MATCHING: "true"
 
       - name: Run SAST Scan (Bandit)
-        uses: ashwinberyl/reusable-workflows/actions/run-sast-scan
+        uses: ashwinberyl/reusable-workflows/actions/run-sast-scan@v1
         with:
           app-directory: ${{ inputs.app-directory }}
 
       - name: Scan Dependencies (Safety)
-        uses: ashwinberyl/reusable-workflows/actions/scan-dependencies
+        uses: ashwinberyl/reusable-workflows/actions/scan-dependencies@v1
         with:
           requirements-file: ${{ inputs.requirements-file }}
