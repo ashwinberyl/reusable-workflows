@@ -1,0 +1,66 @@
+name: Reusable Flask CI & Security
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: 'Python version to use'
+        type: string
+        default: '3.11'
+      app-directory:
+        description: 'Directory to scan (for bandit, pytest)'
+        type: string
+        default: '.'
+      requirements-file:
+        description: 'Path to requirements.txt'
+        type: string
+        default: 'requirements.txt'
+
+jobs:
+  # Job 1: Build, install dependencies, and run tests
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python, Tools, and Dependencies
+        uses: ./actions/setup-python
+        with:
+          python-version: ${{ inputs.python-version }}
+          requirements-file: ${{ inputs.requirements-file }}
+
+      - name: Run Tests and Coverage
+        uses: ./actions/run-tests
+        with:
+          app-directory: ${{ inputs.app-directory }}
+
+  # Job 2: The dedicated, parallel security job
+  security-scan:
+    runs-on: ubuntu-latest
+    # This job runs in parallel with build-and-test
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python, Tools, and Dependencies
+        # Security tools are installed by this action
+        uses: ./actions/setup-python
+        with:
+          python-version: ${{ inputs.python-version }}
+          requirements-file: ${{ inputs.requirements-file }}
+
+      - name: Scan for Leaked Secrets (Gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          # This ensures gitleaks checks all files, not just the commit diff
+          GITLEAKS_ENABLE_REGEX_MATCHING: "true"
+
+      - name: Run SAST Scan (Bandit)
+        uses: ./actions/run-sast-scan
+        with:
+          app-directory: ${{ inputs.app-directory }}
+
+      - name: Scan Dependencies (Safety)
+        uses: ./actions/scan-dependencies
+        with:
+          requirements-file: ${{ inputs.requirements-file }}

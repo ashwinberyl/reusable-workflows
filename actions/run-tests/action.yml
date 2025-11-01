@@ -1,0 +1,15 @@
+name: 'Run Pytest'
+description: 'Runs pytest with coverage'
+
+inputs:
+  app-directory:
+    description: 'Directory to test'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run pytest
+      shell: bash
+      # This runs pytest on the specified directory and generates a coverage report
+      run: pytest --cov=${{ inputs.app-directory }} --cov-report=xml

@@ -1,0 +1,14 @@
+name: 'Scan Dependencies (Safety)'
+description: 'Runs safety to find vulnerable packages'
+
+inputs:
+  requirements-file:
+    description: 'Path to requirements.txt'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run safety
+      shell: bash
+      run: safety check -r ${{ inputs.requirements-file }}

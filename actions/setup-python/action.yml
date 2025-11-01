@@ -1,0 +1,30 @@
+name: 'Setup Python Environment'
+description: 'Installs Python, dependencies, and CI tools'
+
+inputs:
+  python-version:
+    description: 'Python version'
+    required: true
+  requirements-file:
+    description: 'Path to requirements.txt'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install CI/CD Tools
+      shell: bash
+      run: |
+        pip install --upgrade pip
+        # Install all our security and testing tools
+        pip install bandit safety pytest pytest-cov
+
+    - name: Install App Dependencies
+      shell: bash
+      run: |
+        pip install -r ${{ inputs.requirements-file }}
