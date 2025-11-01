@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python, Tools, and Dependencies
-        uses: ./actions/setup-python
+        uses: ashwinberyl/reusable-workflows/actions/setup-python
         with:
           python-version: ${{ inputs.python-version }}
           requirements-file: ${{ inputs.requirements-file }}
